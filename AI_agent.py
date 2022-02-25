@@ -1,3 +1,5 @@
+from Utilities import Moves
+
 class Agent:
     def __init__(self) -> None:
         pass
@@ -9,7 +11,10 @@ class Agent:
         pass
 
     def ComputeNextMove(self) -> int:
-        return 0
+        return Moves.up
 
 if __name__ == "__main__":
-    print(Do some tests...)
+    print("Do some tests...")
+    agent = Agent()
+    print(agent.ComputeNextMove())
+    print("All done")

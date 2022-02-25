@@ -1,5 +1,3 @@
-from Utilities import Moves
-
 class Agent:
     def __init__(self) -> None:
         pass
@@ -12,6 +10,12 @@ class Agent:
 
     def ComputeNextMove(self) -> int:
         return Moves.up
+
+class Moves:
+    up = 0
+    down = 1
+    left = 2
+    right = 3
 
 if __name__ == "__main__":
     print("Do some tests...")

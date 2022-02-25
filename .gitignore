@@ -128,3 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /.vs/slnx.sqlite
+/.vs/BoardGame/v17/.suo

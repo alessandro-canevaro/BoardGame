@@ -3,28 +3,30 @@ import random
 import numpy as np
 import copy as cp
 
-board_size = 4
 temp_board =[]
+
 class GameEngine:
-    def __init__(self):
+    def __init__(self, board_size=4):
+        self.board_size = board_size
         #self.board = [[0 for i in range[4]] for j in range [4]]
-        self.board = np.zeros((board_size,board_size))
+        self.board = np.zeros((self.board_size, self.board_size))
 
     def setRandomNumberInTile(self, k=1) ->None: 
         #Trying to get position of the board in the form of (x,y)
         #Here the k will decide how many positions to put random number
         board_position = list(zip(*np.where(self.board == 0)))
-        for rand_pos in random.sample(board_position, k=k):
-            if random.randint(1, 8) == 1:
-                self.board[rand_pos] = 4
-            else:
-                self.board[rand_pos] = 2
+        if len(board_position) > 0:
+            for rand_pos in random.sample(board_position, k=k):
+                if random.randint(1, 8) == 1:
+                    self.board[rand_pos] = 4
+                else:
+                    self.board[rand_pos] = 2
 
     def _compress(self, row):
         """compress all the numbers on one side of the board.
         """
         new_row = [i for i in row if i != 0]
-        return new_row + [0] * (4-len(new_row))
+        return new_row + [0] * (self.board_size-len(new_row))
 
     def _swiperow(self, row):
         """return the row after a swipe from right to left.
@@ -37,7 +39,7 @@ class GameEngine:
         return self._compress(row)
 
     #Swipe left  
-    def swipeLeft(self):
+    def _swipeLeft(self):
         for i in range(4):
             self.board[i, :] = self._swiperow(self.board[i, :])
 
@@ -51,18 +53,16 @@ class GameEngine:
 
             # merging while swiping left
 
-    #Swipe Right  
-    def swipeRight(self, move):
-        pass
-    
-    #Swipe Down
-    def swipeDown(self, move):
+    def swipe(self, direction):
+        if direction == 'l': #Swipe Left
+            self._swipeLeft()
+        if direction == 'r': #Swipe Right
             pass
-
-    #Swipe Up
-    def swipeUp(self, move):
-        pass
-    
+        if direction == 'u': #Swipe Up
+            pass
+        if direction == 'd': #Swipe Down
+            pass
+                
     # checking board is same or not
     def isSameBoard(self)-> bool:
         if temp_board == self.board:
@@ -71,7 +71,6 @@ class GameEngine:
     def isGameOver(self) -> bool:
         if self.isNoMove() == True:
             return True
-        
     
     def isNoMove(self) -> bool:
         #check all 4 way merge, if board return same then no more move.
@@ -86,19 +85,17 @@ class GameEngine:
         """Add 'value' in an empty tile of the board randomly.
         """
         pass
+
     def printboard(self):
-        return self.board
+        print(self.board)
         
-
-    
-
 
 if __name__ == "__main__":
     ge = GameEngine()
     ge.setRandomNumberInTile(k=2)
-    print(ge.printboard())
-    ge.swipeLeft()
-    print(ge.printboard())
+    ge.printboard()
+    ge.swipe('l')
+    ge.printboard()
     #print(ge.TestGoal())
     #ge.board[0][3] = 2048
     #print(ge.TestGoal()

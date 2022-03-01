@@ -68,6 +68,8 @@ class GameEngine:
         """
         pass
     def printboard(self):
+        """print the whole board in the terminal.
+        """
         return self.board
         
 

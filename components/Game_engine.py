@@ -1,34 +1,54 @@
 
 import random
+from typing import Iterable
 import numpy as np
 import copy as cp
 
 temp_board =[]
 
-class GameEngine:
-    def __init__(self, board_size=4):
-        self.board_size = board_size
-        #self.board = [[0 for i in range[4]] for j in range [4]]
-        self.board = np.zeros((self.board_size, self.board_size))
 
-    def setRandomNumberInTile(self, k=1) ->None: 
-        #Trying to get position of the board in the form of (x,y)
-        #Here the k will decide how many positions to put random number
-        board_position = list(zip(*np.where(self.board == 0)))
-        if len(board_position) > 0:
-            for rand_pos in random.sample(board_position, k=k):
-                if random.randint(1, 8) == 1:
-                    self.board[rand_pos] = 4
-                else:
-                    self.board[rand_pos] = 2
+class Board:
+    def __init__(self, board_values=None, board_size=4) -> None:
+        self.board_size = board.board_size if board_values else board_size
+        self.values = board_values if board_values else np.zeros((self.board_size, self.board_size))
 
-    def _compress(self, row):
+    def __repr__(self) -> str:
+        return str(self.values)
+
+    def __iter__(self) -> Iterable:
+        return iter(self.values)
+
+    def __eq__(self, board_obj) -> bool:
+        return np.array_equal(self.values, board_obj.values)
+
+    def PossibleMoves(self) -> list:
+        """Return a list with the possible moves between l, r, u, d.
+        """
+        possible_moves = []
+        for direction in ['l', 'r', 'u', 'd']:
+            new_board = self.swipe(direction, inplace=False)
+            if not np.array_equal(self.values, new_board):
+                possible_moves.append(dir)
+        return possible_moves
+
+    def GetEmptyTiles(self) -> list:
+        """Return a list of tuple representing the position of the empty tiles.
+        """
+        return list(zip(*np.where(self.values == 0)))
+
+    def SetEmptyTile(self, position, value) -> None:
+        """Set an empty tile with 'value'
+        """
+        if position in self.GetEmptyTiles():
+            self.values[position] = value
+
+    def _compress(self, row) -> list:
         """compress all the numbers on one side of the board.
         """
         new_row = [i for i in row if i != 0]
         return new_row + [0] * (self.board_size-len(new_row))
 
-    def _swiperow(self, row):
+    def _swiperow(self, row) -> list:
         """return the row after a swipe from right to left.
         """
         row = self._compress(row)
@@ -38,30 +58,43 @@ class GameEngine:
                 row[i+1] = 0
         return self._compress(row)
 
-    #Swipe left  
-    def _swipeLeft(self):
-        for i in range(4):
-            self.board[i, :] = self._swiperow(self.board[i, :])
+    def _swipeLeft(self, board_values) -> np.ndarray:
+        new_board = np.zeros_like(board_values)
+        for i in range(self.board_size):
+            new_board[i, :] = self._swiperow(board_values[i, :])
+        return new_board
 
-        #for i in range(board_size):
-        #    zvalue =  self.board[i, :]
-        #    nvalue = zvalue[zvalue !=0]   
-        #    fvalue = np.zeros_like(zvalue)
-        #    fvalue[:len(nvalue)] = nvalue
-        #    self.board[i, :] = fvalue
-        #    temp_board = cp.deepcopy(self.board)
+    def Swipe(self, direction, inplace=True): 
+        moves2rot = {'l': (0, 4),
+                     'u': (1, 3),
+                     'r': (2, 2),
+                     'd': (3, 1)}
 
-            # merging while swiping left
+        new_board = np.rot90(self.values, moves2rot[direction][0])
+        new_board = self._swipeLeft(new_board)
+        new_board = np.rot90(new_board, moves2rot[direction][1])
 
-    def swipe(self, direction):
-        if direction == 'l': #Swipe Left
-            self._swipeLeft()
-        if direction == 'r': #Swipe Right
-            pass
-        if direction == 'u': #Swipe Up
-            pass
-        if direction == 'd': #Swipe Down
-            pass
+        if inplace:
+            self.values = new_board
+        else:
+            return new_board
+
+
+class GameEngine:
+    def __init__(self):
+        self.board = Board()
+
+    def setRandomNumberInTile(self, k=1) ->None: 
+        """Add k random new tiles in the empty positions of the board.
+        """
+        #Trying to get position of the board in the form of (x,y)
+        #Here the k will decide how many positions to put random number
+        board_positions = self.board.GetEmptyTiles()
+        if len(board_positions) >= k:
+            rand_pos = random.sample(board_positions, k=k)
+            rand_num = random.choices([2, 4], [0.9, 0.1], k=k)
+            for pos, value in zip(rand_pos, rand_num):
+                self.board.SetEmptyTile(pos, value)
                 
     # checking board is same or not
     def isSameBoard(self)-> bool:
@@ -69,22 +102,14 @@ class GameEngine:
             return True
     
     def isGameOver(self) -> bool:
-        if self.isNoMove() == True:
-            return True
-    
-    def isNoMove(self) -> bool:
-        #check all 4 way merge, if board return same then no more move.
-        pass
+        if self.board.PossibleMoves():
+            return False
+        return True
 
-    def TestGoal(self, goal=2048) -> bool:
+    def isGoal(self, goal=2048) -> bool:
         """Return True if the board contains the goal value.
         """
         return any(goal in row for row in self.board)
-
-    def SpawnNumber(self, value=2) -> None:
-        """Add 'value' in an empty tile of the board randomly.
-        """
-        pass
 
     def printboard(self):
         print(self.board)
@@ -94,7 +119,7 @@ if __name__ == "__main__":
     ge = GameEngine()
     ge.setRandomNumberInTile(k=2)
     ge.printboard()
-    ge.swipe('l')
+    ge.board.swipe('l')
     ge.printboard()
     #print(ge.TestGoal())
     #ge.board[0][3] = 2048

@@ -3,7 +3,6 @@
 from components.Game_engine import GameEngine
 from components.AI_agent import Agent
 
-
 def main():
     ge = GameEngine()
     ge.setRandomNumberInTile(k=2)
@@ -23,10 +22,6 @@ def main():
             move = input("Select your next move {}:".format(possible_moves)).lower()
         ge.board.Swipe(move)
         ge.setRandomNumberInTile(k=1)
-
-
-
-
 
 
 if __name__ == "__main__":

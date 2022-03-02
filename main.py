@@ -9,17 +9,19 @@ def main():
     ge.setRandomNumberInTile(k=2)
     while True:
         ge.printboard()
+
         if ge.isGameOver():
             print("Game over!")
             break
-        elif ge.TestGoal():
+        elif ge.isGoal():
             print("Victory!")
             break
 
         move = ''
-        while move not in ['l', 'r', 'd', 'u']:
-            move = input("Please select your next move (l, r, u, d):").lower()
-        ge.board.swipe(move)
+        possible_moves = ge.board.PossibleMoves()
+        while move not in possible_moves:
+            move = input("Select your next move {}:".format(possible_moves)).lower()
+        ge.board.Swipe(move)
         ge.setRandomNumberInTile(k=1)
 
 

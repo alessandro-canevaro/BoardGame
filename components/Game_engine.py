@@ -1,10 +1,6 @@
 
 import random
-from typing import Iterable
 import numpy as np
-import copy as cp
-
-temp_board =[]
 
 
 class Board:
@@ -15,7 +11,7 @@ class Board:
     def __repr__(self) -> str:
         return str(self.values)
 
-    def __iter__(self) -> Iterable:
+    def __iter__(self):
         return iter(self.values)
 
     def __eq__(self, board_obj) -> bool:
@@ -26,9 +22,9 @@ class Board:
         """
         possible_moves = []
         for direction in ['l', 'r', 'u', 'd']:
-            new_board = self.swipe(direction, inplace=False)
+            new_board = self.Swipe(direction, inplace=False)
             if not np.array_equal(self.values, new_board):
-                possible_moves.append(dir)
+                possible_moves.append(direction)
         return possible_moves
 
     def GetEmptyTiles(self) -> list:
@@ -119,7 +115,7 @@ if __name__ == "__main__":
     ge = GameEngine()
     ge.setRandomNumberInTile(k=2)
     ge.printboard()
-    ge.board.swipe('l')
+    ge.board.Swipe('l')
     ge.printboard()
     #print(ge.TestGoal())
     #ge.board[0][3] = 2048

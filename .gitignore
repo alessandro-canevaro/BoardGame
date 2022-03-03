@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 /.vs/slnx.sqlite
 /.vs/BoardGame/v17/.suo
+/.vs/BoardGame
+/.vs/VSWorkspaceState.json

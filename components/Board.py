@@ -56,9 +56,9 @@ class Board:
         for i in range(self.board_size):
             new_board[i, :] = self._swiperow(board_values[i, :])
         return new_board
-    def _swipeRighty(self, board_values) -> np.ndarray:
+    
         
-def Swipe(self, direction, inplace=True): 
+    def Swipe(self, direction, inplace=True): 
         moves2rot = {'l': (0, 4),
                      'u': (1, 3),
                      'r': (2, 2),

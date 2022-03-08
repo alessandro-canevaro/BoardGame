@@ -1,13 +1,14 @@
+import numpy as np
 from Board import Board
 
 
 class ExpectiMaxAgent:
     def __init__(self) -> None:
-        self.w_matrix = [[2, 2**2, 2**3, 2**4],
+        self.w_matrix = np.array([[2, 2**2, 2**3, 2**4],
         [2**8, 2**7, 2**6, 2**5],
         [2**9, 2**10, 2**11, 2**12],
         [2**16, 2**15, 2**14, 2**13]
-        ]
+        ])
         
 
     def ExpandTree(self, board) -> dict:
@@ -29,12 +30,7 @@ class ExpectiMaxAgent:
 
     def ComputeHeuristics(self, board) -> int:
         """ referencing the paper http://cs229.stanford.edu/proj2016/report/NieHouAn-AIPlays2048-report.pdf"""
-        hval = 0
-        for i in range(4):
-            for j in range(4):
-                hval =  hval+ board[i][j] * self.w_matrix[i][j]
-            
-        return hval
+        return int(np.sum(np.multiply(board.values, self.w_matrix)))
 
     def ComputeNextMove(self, board) -> str:
         return Moves.up
@@ -56,5 +52,7 @@ if __name__ == "__main__":
     b.SetEmptyTile((2, 2), 2)
     print(b)
     agent = ExpectiMaxAgent()
-    print(agent.ExpandTree(b)['l'][1])
+    new_board = agent.ExpandTree(b)['l'][1]
+    print(new_board)
+    print(agent.ComputeHeuristics(new_board))
     print("All done")

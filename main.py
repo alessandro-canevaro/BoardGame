@@ -8,17 +8,22 @@ def main():
     ge.setRandomNumberInTile(k=2)
     em = ExpectiMaxAgent(ge.board)
     i = 0
-    while i <= 1000:
+    while i <= 10000:
         ge.printboard()
 
         if ge.isGameOver():
             print("Game over!")
             break
-        elif ge.isGoal():
-            print("Victory!")
-            break
+        #elif ge.isGoal():
+        #    print("Victory!")
+        #    break
 
-        em_move = em.ComputeNextMove()
+        empty_tiles = ge.board.GetEmptyTiles()
+        if len(empty_tiles) > 2:
+            depth = 2
+        else:    
+            depth = 3
+        em_move = em.ComputeNextMove(depth)
         print("{}: AI suggests: {}".format(i, em_move))
         #move = ''
         #possible_moves = ge.board.PossibleMoves()

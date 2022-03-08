@@ -18,12 +18,12 @@ class ExpectiMaxAgent:
         for m in board.PossibleMoves():
             moved_board = Board(board)
             moved_board.Swipe(m)
-            boards_dict[m] = []
+            boards_dict[m] = {2: [], 4: []}
             for pos in moved_board.GetEmptyTiles():
-                boards_dict[m].append(Board(moved_board))
-                boards_dict[m][-1].SetEmptyTile(pos, 2)
-                boards_dict[m].append(Board(moved_board))
-                boards_dict[m][-1].SetEmptyTile(pos, 4)
+                boards_dict[m][2].append(Board(moved_board))
+                boards_dict[m][2][-1].SetEmptyTile(pos, 2)
+                boards_dict[m][4].append(Board(moved_board))
+                boards_dict[m][4][-1].SetEmptyTile(pos, 4)
 
         return boards_dict
 
@@ -33,8 +33,10 @@ class ExpectiMaxAgent:
 
     def ComputeNextMove(self, board) -> str:
         moves_dict = self.ExpandTree(board)
-        for k, boards_list in moves_dict.items():
-            moves_dict[k] = np.mean([self.ComputeHeuristics(b) for b in boards_list]) #still need to weight the average with the 90-10% rule
+        for move, boards_dict in moves_dict.items():
+            for num, boards_list in boards_dict.items():
+                moves_dict[move][num] = np.mean([self.ComputeHeuristics(b) for b in boards_list])
+            moves_dict[move] = 0.9*moves_dict[move][2]+0.1*moves_dict[move][4]
         return max(moves_dict, key=moves_dict.get)
     
 
@@ -44,7 +46,7 @@ if __name__ == "__main__":
     b.SetEmptyTile((2, 2), 2)
     print(b)
     agent = ExpectiMaxAgent()
-    new_board = agent.ExpandTree(b)['l'][1]
+    new_board = agent.ExpandTree(b)['l'][4][0]
     print(new_board)
     print(agent.ComputeHeuristics(new_board))
     print(agent.ComputeNextMove(b))

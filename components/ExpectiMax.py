@@ -1,5 +1,5 @@
 import numpy as np
-from Board import Board
+from components.Board import Board
 
 
 class ExpectiMaxAgent:

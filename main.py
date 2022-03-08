@@ -1,12 +1,14 @@
 #Main file from where the whole game is run
 
 from components.Game_engine import GameEngine
-from components.AI_agent import Agent
+from components.ExpectiMax import ExpectiMaxAgent
 
 def main():
     ge = GameEngine()
     ge.setRandomNumberInTile(k=2)
-    while True:
+    em = ExpectiMaxAgent()
+    i = 0
+    while i <= 1000:
         ge.printboard()
 
         if ge.isGameOver():
@@ -16,12 +18,15 @@ def main():
             print("Victory!")
             break
 
-        move = ''
-        possible_moves = ge.board.PossibleMoves()
-        while move not in possible_moves:
-            move = input("Select your next move {}:".format(possible_moves)).lower()
-        ge.board.Swipe(move)
+        em_move = em.ComputeNextMove(ge.board)
+        print("AI suggests: {}".format(em_move))
+        #move = ''
+        #possible_moves = ge.board.PossibleMoves()
+        #while move not in possible_moves:
+        #    move = input("Select your next move {}:".format(possible_moves)).lower()
+        ge.board.Swipe(em_move)
         ge.setRandomNumberInTile(k=1)
+        i += 1
 
 
 if __name__ == "__main__":

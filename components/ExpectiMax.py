@@ -27,24 +27,16 @@ class ExpectiMaxAgent:
 
         return boards_dict
 
-
     def ComputeHeuristics(self, board) -> int:
         """ referencing the paper http://cs229.stanford.edu/proj2016/report/NieHouAn-AIPlays2048-report.pdf"""
         return int(np.sum(np.multiply(board.values, self.w_matrix)))
 
     def ComputeNextMove(self, board) -> str:
-        return Moves.up
+        moves_dict = self.ExpandTree(board)
+        for k, boards_list in moves_dict.items():
+            moves_dict[k] = np.mean([self.ComputeHeuristics(b) for b in boards_list]) #still need to weight the average with the 90-10% rule
+        return max(moves_dict, key=moves_dict.get)
     
-    def ComputeExpectimax(self, board, depth):
-        if depth == 0:
-            return self.ComputeHeuristics(board)
-        elif depth == 1:
-            ''' chance node '''
-            ''' to do something'''
-            return self.ComputeExpectimax(board,depth-1)
-        else:
-             pass
-
 
 if __name__ == "__main__":
     print("Do some tests...")
@@ -55,4 +47,5 @@ if __name__ == "__main__":
     new_board = agent.ExpandTree(b)['l'][1]
     print(new_board)
     print(agent.ComputeHeuristics(new_board))
+    print(agent.ComputeNextMove(b))
     print("All done")

@@ -1,4 +1,7 @@
-class Agent:
+from Board import Board
+
+
+class ExpectiMaxAgent:
     def __init__(self) -> None:
         self.w_matrix = [[2, 2**2, 2**3, 2**4],
         [2**8, 2**7, 2**6, 2**5],
@@ -7,10 +10,24 @@ class Agent:
         ]
         
 
-    def ExpandTree(self) -> None:
-        pass
+    def ExpandTree(self, board) -> dict:
+        """For each possible move generate all the possible boards with one new tile"""
+        boards_dict = {}
+        possible_moves = board.PossibleMoves()
+        for m in board.PossibleMoves():
+            moved_board = Board(board)
+            moved_board.Swipe(m)
+            boards_dict[m] = []
+            for pos in moved_board.GetEmptyTiles():
+                boards_dict[m].append(Board(moved_board))
+                boards_dict[m][-1].SetEmptyTile(pos, 2)
+                boards_dict[m].append(Board(moved_board))
+                boards_dict[m][-1].SetEmptyTile(pos, 4)
 
-    def ComputeHeuristics(self, board):
+        return boards_dict
+
+
+    def ComputeHeuristics(self, board) -> int:
         """ referencing the paper http://cs229.stanford.edu/proj2016/report/NieHouAn-AIPlays2048-report.pdf"""
         hval = 0
         for i in range(4):
@@ -19,7 +36,7 @@ class Agent:
             
         return hval
 
-    def ComputeNextMove(self) -> int:
+    def ComputeNextMove(self, board) -> str:
         return Moves.up
     
     def ComputeExpectimax(self, board, depth):
@@ -33,17 +50,11 @@ class Agent:
              pass
 
 
-            
-
-        
-class Moves:
-    up = 0
-    down = 1
-    left = 2
-    right = 3
-
 if __name__ == "__main__":
     print("Do some tests...")
-    agent = Agent()
-    print(agent.ComputeNextMove())
+    b = Board()
+    b.SetEmptyTile((2, 2), 2)
+    print(b)
+    agent = ExpectiMaxAgent()
+    print(agent.ExpandTree(b)['l'][1])
     print("All done")

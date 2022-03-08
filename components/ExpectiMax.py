@@ -18,13 +18,36 @@ class MaxNode(Node):
             moved_board.Swipe(m)
             self.children.append(ChanceNode(self, moved_board, m))
 
+    def HeuristicSnake(self, board):
+        weights = np.exp2(np.array([[1,  2,  3,  4],
+                                    [8,  7,  6,  5], 
+                                    [9,  10, 11, 12], 
+                                    [16, 15, 14, 13]]))
+        return np.sum(np.multiply(board, weights))
+
+    def HeuristicEmptySnake(self, board):
+        weights = np.exp2(np.array([[1,  2,  3,  4],
+                                    [8,  7,  6,  5], 
+                                    [9,  10, 11, 12], 
+                                    [16, 15, 14, 13]]))
+        boost = (np.count_nonzero(board==0)/1)+1
+        return np.sum(np.multiply(board, weights)) * boost
+
+    def HeuristicSnake8x(self, board):
+        weights = np.exp2(np.array([[1,  2,  3,  4],
+                                    [8,  7,  6,  5], 
+                                    [9,  10, 11, 12], 
+                                    [16, 15, 14, 13]]))
+        results = []
+        for i in range(4):
+            rotated = np.rot90(weights, i)
+            results.append(np.sum(np.multiply(board, rotated)))
+            results.append(np.sum(np.multiply(board, np.fliplr(rotated))))
+        return max(results)
+            
     def ComputeHeuristic(self, depth):
         if depth == 1:
-            w_matrix = np.array([[2, 2**2, 2**3, 2**4],
-                                [2**8, 2**7, 2**6, 2**5],
-                                [2**9, 2**10, 2**11, 2**12],
-                                [2**16, 2**15, 2**14, 2**13]])
-            return int(np.sum(np.multiply(self.board.values, w_matrix)))
+            return self.HeuristicSnake(self.board.values)
 
         best_move = self.GetBestMove(depth=depth-1)
         if best_move == 'game_over':

@@ -18,7 +18,7 @@ class Board:
         """Return a list with the possible moves between l, r, u, d.
         """
         possible_moves = []
-        for direction in ['l', 'r', 'u', 'd']:
+        for direction in ['left', 'right', 'up', 'down']:
             new_board = self.Swipe(direction, inplace=False)
             if not np.array_equal(self.values, new_board):
                 possible_moves.append(direction)
@@ -59,10 +59,10 @@ class Board:
     
         
     def Swipe(self, direction, inplace=True): 
-        moves2rot = {'l': (0, 4),
-                     'u': (1, 3),
-                     'r': (2, 2),
-                     'd': (3, 1)}
+        moves2rot = {'left': (0, 4),
+                     'up': (1, 3),
+                     'right': (2, 2),
+                     'down': (3, 1)}
 
         new_board = np.rot90(self.values, moves2rot[direction][0])
         new_board = self._swipeLeft(new_board)

@@ -62,12 +62,19 @@ class ChanceNode(Node):
 class ExpectiMaxAgent:
     def __init__(self, board) -> None:
         self.root = MaxNode(None, board, 1)
+        self.last_move = ''
         
-    def ComputeNextMove(self) -> str:
-        return self.root.GetBestMove(depth=2)
+    def ComputeNextMove(self, depth=2) -> str:
+        self.last_move = self.root.GetBestMove(depth)
+        return self.last_move
 
     def UpdateTree(self, board):
-        self.root = MaxNode(None, board, 1)
+        best_child = next((c for c in self.root.children if c.move == self.last_move))
+        for c in best_child.children:
+            if c.board == board:
+                self.root = c
+        
+        #self.root = MaxNode(None, board, 1)
     
 
 if __name__ == "__main__":

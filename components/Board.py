@@ -54,6 +54,17 @@ class Board:
                 row[i+1] = 0
         return self._compress(row)
 
+    def _swiperowEfficient(self, row, score_update):
+        new_row = row[np.nonzero(row)]
+        diff = np.diff(new_row) == 0
+        new_row[diff.nonzero()] *= 2
+        new_row[diff.nonzero()[0] + 1] = 0
+        new_row = new_row[np.nonzero(new_row)]
+        padded_array = np.zeros_like(row)
+        padded_array[:new_row.shape[0]] = new_row
+        return padded_array
+
+
     def _swipeLeft(self, board_values, score_update) -> np.ndarray:
         new_board = np.zeros_like(board_values)
         for i in range(self.board_size):

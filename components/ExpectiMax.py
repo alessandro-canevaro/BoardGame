@@ -15,7 +15,7 @@ class MaxNode(Node):
     def Expand(self):
         for m in self.board.PossibleMoves():
             moved_board = Board(self.board)
-            moved_board.Swipe(m)
+            moved_board.Swipe(m, False)
             self.children.append(ChanceNode(self, moved_board, m))
 
     def HeuristicSnake(self, board):
@@ -89,7 +89,6 @@ class ChanceNode(Node):
 class ExpectiMaxAgent:
     def __init__(self, board, depth='adaptive', heuristic='snake') -> None:
         self.root = MaxNode(None, board, 1)
-        self.last_move = ''
         self.depth = depth
         self.heuristic = heuristic
         
@@ -103,11 +102,10 @@ class ExpectiMaxAgent:
             else:    
                 depth = 3
 
-        self.last_move = self.root.GetBestMove(depth, self.heuristic)
-        return self.last_move
+        return self.root.GetBestMove(depth, self.heuristic)
 
-    def UpdateTree(self, board):
-        best_child = next((c for c in self.root.children if c.move == self.last_move))
+    def UpdateTree(self, board, lastmove):
+        best_child = next((c for c in self.root.children if c.move == lastmove))
         for c in best_child.children:
             if c.board == board:
                 self.root = c

@@ -19,14 +19,15 @@ def main():
         #    break
 
         em_move = em.ComputeNextMove()
-        print("{}: AI suggests: {}".format(i, em_move))
+        print("Move: {}: Score: {} AI suggests: {}".format(i, int(ge.board.score), em_move))
         #move = ''
         #possible_moves = ge.board.PossibleMoves()
         #while move not in possible_moves:
         #    move = input("Select your next move {}:".format(possible_moves)).lower()
-        ge.board.Swipe(em_move)
+        #ge.board.Swipe(move, True)
+        ge.board.Swipe(em_move, True)
         ge.setRandomNumberInTile(k=1)
-        em.UpdateTree(ge.board)
+        em.UpdateTree(ge.board, em_move)
         i += 1
 
 

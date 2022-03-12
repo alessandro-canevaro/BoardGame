@@ -4,9 +4,8 @@ import numpy as np
 import math
 from components.Board import Board
 from components.Game_engine import GameEngine
-from components.ExpectiMax import ExpectiMaxAgent
 
-possible_move = ['l', 'r', 'u', 'd']
+possible_move = ['left', 'right', 'up', 'down']
 
 
 class MCTSAgent:
@@ -32,14 +31,17 @@ class MoveSimulation:
     def BestNextMove(self, runs):
         max_score = 0
         record_score = []
-        for m in possible_move:
+        Possible_move = self.board.PossibleMoves()
+        for m in Possible_move:
             moved_board = Board(self.board)
-            moved_board.Swipe(m)
+            moved_board.Swipe(m, True)
             template_score = evalRandomRun(moved_board, runs)
             record_score.append(template_score)
-            if template_score > max_score and template_score != 0:
-                max_score = template_score
-                self.max_score_move = m
+            # if template_score > max_score and template_score != 0:
+            #     max_score = template_score
+            #     self.max_score_move = m
+        max_score = max(record_score)
+        self.max_score_move = Possible_move[np.argmax(record_score)]
         print(record_score)
         return self.max_score_move
 
@@ -51,22 +53,20 @@ def evalRandomRun(board, runs):
     while i < runs:
         simulation_board = Board(board)
         # Possiblemove = simulation_board.PossibleMoves()
-        move = 0
+        # move = 0
         while simulation_board.PossibleMoves():
-            simulation_board.Swipe(possible_move[math.floor(random.random() * 4)])
-            # print(simulation_board)
-            move += 1
+            simulation_board.Swipe(possible_move[math.floor(random.random() * 4)], False)
+            # move += 1
             position = simulation_board.GetEmptyTiles()
-            # print('1', simulation_board)
             if position:
                 rand_pos = random.sample(position, 1)
                 rand_num = random.choices([2, 4], [0.9, 0.1], k=1)
                 for pos, value in zip(rand_pos, rand_num):
                     simulation_board.SetEmptyTile(pos, value)
-            # print('2', simulation_board)
         simulation_score = int(np.sum(simulation_board.values))
+        # total_score += simulation_board.score
         total_score += simulation_score
-        total_move += move
+        # total_move += move
         i += 1
     sum_score = np.sum(total_score)
     sum_move = np.sum(total_move)
@@ -87,13 +87,15 @@ def main():
             print("Game over!")
             break
         empty_tiles = ge.board.GetEmptyTiles()
-        if len(empty_tiles) > 2:
-            runs = 40
-        else:
+        if len(empty_tiles) > 7:
+            runs = 20
+        elif len(empty_tiles) > 4:
             runs = 50
+        else:
+            runs = 70
         mc_move = mc.GetNextMove(runs)
-        print("{}: AI suggests: {}".format(i, mc_move))
-        ge.board.Swipe(mc_move)
+        print("Move: {}: Score: {} AI suggests: {}".format(i, int(ge.board.score), mc_move))
+        ge.board.Swipe(mc_move, True)
         ge.setRandomNumberInTile(k=1)
         mc.UpdateBoard(ge.board)
         i += 1

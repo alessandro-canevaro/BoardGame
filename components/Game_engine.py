@@ -38,7 +38,7 @@ class GameEngine:
         print the board.
         """
         board_list=[]
-        print(list(self.board.values))
+        #print(list(self.board.values))
         for j in range(4):
             row = self.board.values[j]
             board_list = np.append(board_list, row)

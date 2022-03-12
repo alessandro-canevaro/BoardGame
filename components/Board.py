@@ -3,7 +3,7 @@ import numpy as np
 class Board:
     def __init__(self, board=None, board_size=4) -> None:
         self.board_size = board.board_size if board else board_size
-        self.values = board.values.copy() if board else np.zeros((self.board_size, self.board_size))
+        self.values = board.values.copy() if board else np.zeros((self.board_size, self.board_size), dtype=int)
         self.score = 0
 
     def __repr__(self) -> str:

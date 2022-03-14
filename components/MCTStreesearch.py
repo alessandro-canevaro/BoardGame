@@ -29,7 +29,7 @@ class MoveSimulation:
         self.max_score_move = 0
 
     def BestNextMove(self, runs):
-        max_score = 0
+        # max_score = 0
         record_score = []
         Possible_move = self.board.PossibleMoves()
         for m in Possible_move:
@@ -37,10 +37,7 @@ class MoveSimulation:
             moved_board.Swipe(m, True)
             template_score = evalRandomRun(moved_board, runs)
             record_score.append(template_score)
-            # if template_score > max_score and template_score != 0:
-            #     max_score = template_score
-            #     self.max_score_move = m
-        max_score = max(record_score)
+        # max_score = max(record_score)
         self.max_score_move = Possible_move[np.argmax(record_score)]
         print(record_score)
         return self.max_score_move
@@ -48,11 +45,11 @@ class MoveSimulation:
 
 def evalRandomRun(board, runs):
     total_score = 0
-    total_move = 0
+    # total_move = 0
     i = 0
     while i < runs:
         simulation_board = Board(board)
-        # Possiblemove = simulation_board.PossibleMoves()
+        # Possible_move = simulation_board.PossibleMoves()
         # move = 0
         while simulation_board.PossibleMoves():
             simulation_board.Swipe(possible_move[math.floor(random.random() * 4)], False)
@@ -69,7 +66,7 @@ def evalRandomRun(board, runs):
         # total_move += move
         i += 1
     sum_score = np.sum(total_score)
-    sum_move = np.sum(total_move)
+    # sum_move = np.sum(total_move)
     # avg_score = sum_score / sum_move
     # simMax_score = max(total_score)
     return sum_score
@@ -81,7 +78,7 @@ def main():
     mc = MCTSAgent(ge.board)
     i = 0
     while i <= 10000:
-        ge.printboard()
+        ge.printBoard()
 
         if ge.isGameOver():
             print("Game over!")

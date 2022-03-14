@@ -3,8 +3,14 @@ from components.Board import Board
 import numpy as np
 
 class GameEngine:
+    state = 'start'
     def __init__(self):
         self.board = Board()
+
+    def start(self, k=2) -> None:
+        self.board = Board()
+        self.setRandomNumberInTile(k)
+        self.state = 'run'
 
     def setRandomNumberInTile(self, k=1) ->None: 
         """Add k random new tiles in the empty positions of the board.
@@ -17,7 +23,8 @@ class GameEngine:
             rand_num = random.choices([2, 4], [0.9, 0.1], k=k)
             for pos, value in zip(rand_pos, rand_num):
                 self.board.SetEmptyTile(pos, value)
-                
+        return None
+
     # checking board is same or not
     def isSameBoard(self)-> bool:
         if temp_board == self.board:
@@ -26,14 +33,18 @@ class GameEngine:
     def isGameOver(self) -> bool:
         if self.board.PossibleMoves():
             return False
+        self.state = 'over'
         return True
 
     def isGoal(self, goal=2048) -> bool:
         """Return True if the board contains the goal value.
         """
-        return any(goal in row for row in self.board)
+        if any(goal in row for row in self.board):
+            self.state = 'victory'
+            return True
+        return False
 
-    def printboard(self):
+    def printBoard(self):
         """
         print the board.
         """
@@ -50,3 +61,9 @@ class GameEngine:
         for i in range(4):
             print((demarcation + '\n').join(['| ' + ' | '.join([conver2char(int(num)) for num in board_list[i * 4:(i + 1) * 4]]) + ' | ']))
             print(demarcation)
+
+
+if __name__ == "__main__":
+    ge = GameEngine()
+    ge.setRandomNumberInTile(k=2)
+    print(ge.board.values[0][1])

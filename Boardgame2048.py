@@ -3,17 +3,19 @@ try:
 except:
     print('cmd run: pip3 install pygame -i https://mirrors.aliyun.com/pypi/simple')
     exit()
+
 from pygame.locals import *
 from components.Game_engine import GameEngine
-from components.AI_agent import Agent
+from components.ExpectiMax import ExpectiMaxAgent
+from components.MCTStreesearch import MCTSAgent
 from components.Board import *
-from test.config import *
+from config import *
 
 # config = Development()
 config = SupperFast()
 
-FPS = config.FPS #60
-SIZE = config.SIZE #4
+FPS = config.FPS  # 60
+SIZE = config.SIZE  # 4
 colors = config.COLORS
 GAME_WH = config.GAME_WH
 WINDOW_W = config.WINDOW_W
@@ -23,7 +25,10 @@ WINDOW_H = config.WINDOW_H
 font_h_w = 2 / 1
 g_w = GAME_WH / SIZE * 0.9
 
-class Main():
+
+
+
+class Main:
     def __init__(self):
         global FPS
         pygame.init()
@@ -31,55 +36,74 @@ class Main():
         self.set_win_wh(WINDOW_W, WINDOW_H, title='2048')
         self.state = 'start'
         self.fps = FPS
-        #self.catch_n = 0
+        # self.catch_n = 0
+        self.ai = None
         self.clock = pygame.time.Clock()
-        self.game = Board(SIZE)
-        #self.ai = Ai()
+        self.game = GameEngine()
         self.step_time = config.STEP_TIME
-        self.next_f = ''
+        self.next_move = ''
+        self.last_move = ''
         self.last_time = time.time()
-        self.jm = -1 #evalutation
+        # self.jm = -1  # score
 
     def run(self):
+        self.game.start()
+        # self.ai = MCTSAgent(self.game.board)
+        print(self.next_move)
+        self.ai = ExpectiMaxAgent(self.game.board, heuristic='snake')
         while self.state != 'exit':
-            if self.game.state in ['over', 'win']:
+            if self.game.state in ['over', 'victory']:
                 self.state = self.game.state
             self.my_event()
-            if self.next_f != '' and (
+            if self.next_move != '' and (
                     self.state == 'run' or self.state == 'ai' and time.time() - self.last_time > self.step_time):
-                self.game.run(self.next_f)
-                self.next_f = ''
+                self.last_move = self.next_move
+                self.game.isGameOver()
+                self.game.board.Swipe(self.next_move, True)
+                self.game.setRandomNumberInTile(k=1)
+                print(self.game.board)
+                self.ai.UpdateTree(self.game.board, self.next_move)
+                # self.ai.UpdateBoard(self.game.board)
+                self.next_move = ''
                 self.last_time = time.time()
-            elif self.state == 'start':
+            elif self.state == 'restart':
                 self.game.start()
                 self.state = 'run'
-            self.set_bg((101, 194, 148))
-            # self.draw_info()
-            # self.draw_button(self.button_list)
+            self.set_bg((255, 255, 153))
+            self.draw_info()
+            self.draw_button(self.button_list)
             self.draw_map()
             self.update()
-        print('退出游戏')
+        print('Exit game')
 
-    # 设置窗口大小
-    def set_win_wh(self, w, h, title='python游戏'):
+    def start(self):
+        # 加载按钮
+        self.button_list = [
+            Button('start', 'Restart', (GAME_WH + 50, 150)),
+            Button('ai', 'UseAI', (GAME_WH + 50, 250)),
+        ]
+        self.run()
+
+    # setting window size
+    def set_win_wh(self, w, h, title='2048'):
         self.screen2 = pygame.display.set_mode((w, h), pygame.DOUBLEBUF, 32)
         self.screen = self.screen2.convert_alpha()
         pygame.display.set_caption(title)
 
-    def set_bg(self, color=(255, 255, 255)):
+    def set_bg(self, color=(153, 255, 204)):
         self.screen.fill(color)
 
     def draw_map(self):
         for y in range(SIZE):
             for x in range(SIZE):
-                self.draw_block((x, y), self.game.tiles[y][x])
+                self.draw_block((x, y), self.game.board.values[y][x])
         if self.state == 'over':
             pygame.draw.rect(self.screen, (0, 0, 0, 0.5),
-                                    (0, 0, GAME_WH, GAME_WH))
+                             (0, 0, GAME_WH, GAME_WH))
             self.draw_text('Game Over！', (GAME_WH / 2, GAME_WH / 2), size=25, center='center')
-        elif self.state == 'win':
+        elif self.state == 'Victory':
             pygame.draw.rect(self.screen, (0, 0, 0, 0.5),
-                                    (0, 0, GAME_WH, GAME_WH))
+                             (0, 0, GAME_WH, GAME_WH))
             self.draw_text('Victory！', (GAME_WH / 2, GAME_WH / 2), size=25, center='center')
 
     # draw block
@@ -90,7 +114,7 @@ class Main():
         # print(colors[str(int(number))])
         color = colors[str(int(number))] if number <= 2048 else (0, 0, 255)
         pygame.draw.rect(self.screen, color,
-                                (x + dx, y + dx, one_size - 2 * dx, one_size - 2 * dx))
+                         (x + dx, y + dx, one_size - 2 * dx, one_size - 2 * dx))
         color = (20, 20, 20) if number <= 4 else (250, 250, 250)
         if number != 0:
             ln = len(str(number))
@@ -119,3 +143,84 @@ class Main():
         # pygame.display.update()
         pygame.display.flip()
         time_passed = self.clock.tick(self.fps)
+
+    # event detection
+    def my_event(self):
+        if self.state == 'ai' and self.next_move == '':
+            if self.last_move == '':
+                self.next_move = self.ai.ComputeNextMove()
+            else:
+                #self.ai.UpdateTree(self.game.board, self.last_move)
+                self.next_move = self.ai.ComputeNextMove()
+            # self.next_move = self.ai.GetNextMove(20)
+            # self.ai = ExpectiMaxAgent(self.game.board, heuristic='snake')
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                self.state = 'exit'
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    self.state = 'exit'
+                elif event.key in [K_LEFT, K_a] and self.state == 'run':
+                    self.next_move = 'left'
+                elif event.key in [K_RIGHT, K_d] and self.state == 'run':
+                    self.next_move = 'right'
+                elif event.key in [K_DOWN, K_s] and self.state == 'run':
+                    self.next_move = 'down'
+                elif event.key in [K_UP, K_w] and self.state == 'run':
+                    self.next_move = 'up'
+                elif event.key in [K_k, K_l] and self.state == 'ai':
+                    if event.key == K_k and self.step_time > 0:
+                        self.step_time *= 0.9
+                    if event.key == K_l and self.step_time < 10:
+                        if self.step_time != 0:
+                            self.step_time *= 1.1
+                        else:
+                            self.step_time = 0.01
+                    if self.step_time < 0:
+                        self.step_time = 0
+
+            if event.type == MOUSEBUTTONDOWN:
+                for i in self.button_list:
+                    if i.is_click(event.pos):
+                        self.state = i.name
+                        if i.name == 'ai':
+                            i.name = 'run'
+                            i.text = 'Cancel AI'
+                        elif i.name == 'run':
+                            i.name = 'ai'
+                            i.text = 'AI run'
+                        break
+
+    def draw_info(self):
+        self.draw_text('Score：{}'.format(self.game.board.score), (GAME_WH + 50, 40))
+        if self.state == 'ai':
+            self.draw_text('Step_time：{}'.format(self.step_time), (GAME_WH + 50, 60))
+            #self.draw_text('评分：{}'.format(self.jm), (GAME_WH + 50, 80))
+
+    def draw_button(self, buttons):
+        for b in buttons:
+            if b.is_show:
+                pygame.draw.rect(self.screen, (180, 180, 200),
+                                 (b.x, b.y, b.w, b.h))
+                self.draw_text(b.text, (b.x + b.w / 2, b.y + 9), size=18, center='center')
+def run():
+    Main().start()
+
+# 按钮类
+class Button(pygame.sprite.Sprite):
+    def __init__(self, name, text, xy, size=(100, 50)):
+        pygame.sprite.Sprite.__init__(self)
+        self.name = name
+        self.text = text
+        self.x, self.y = xy[0], xy[1]
+        self.w, self.h = size
+        self.is_show = True
+
+    def is_click(self, xy):
+        return (self.is_show and
+                self.x <= xy[0] <= self.x + self.w and
+                self.y <= xy[1] <= self.y + self.h)
+
+
+if __name__ == '__main__':
+    run()

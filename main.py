@@ -9,7 +9,7 @@ def main():
     em = ExpectiMaxAgent(ge.board, heuristic='snake')
     i = 0
     while i <= 10000:
-        ge.printboard()
+        ge.printBoard()
 
         if ge.isGameOver():
             print("Game over!")

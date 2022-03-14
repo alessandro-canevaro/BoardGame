@@ -4,6 +4,11 @@ except:
     print('cmd run: pip3 install pygame -i https://mirrors.aliyun.com/pypi/simple')
     exit()
 
+'''
+pygame setting
+Most code references: https://github.com/VacantHusky/2048GameAutoMovePython
+'''
+
 from pygame.locals import *
 from components.Game_engine import GameEngine
 from components.ExpectiMax import ExpectiMaxAgent
@@ -26,8 +31,6 @@ font_h_w = 2 / 1
 g_w = GAME_WH / SIZE * 0.9
 
 
-
-
 class Main:
     def __init__(self):
         global FPS
@@ -36,34 +39,33 @@ class Main:
         self.set_win_wh(WINDOW_W, WINDOW_H, title='2048')
         self.state = 'start'
         self.fps = FPS
-        # self.catch_n = 0
-        self.ai = None
+        self.ai1 = None
+        self.ai2 = None
         self.clock = pygame.time.Clock()
         self.game = GameEngine()
         self.step_time = config.STEP_TIME
         self.next_move = ''
-        self.last_move = ''
         self.last_time = time.time()
-        # self.jm = -1  # score
 
     def run(self):
         self.game.start()
-        # self.ai = MCTSAgent(self.game.board)
+        #self.ai = MCTSAgent(self.game.board)
         print(self.next_move)
-        self.ai = ExpectiMaxAgent(self.game.board, heuristic='snake')
+        self.ai1 = ExpectiMaxAgent(self.game.board, heuristic='snake')
+        self.ai2 = MCTSAgent(self.game.board)
         while self.state != 'exit':
             if self.game.state in ['over', 'victory']:
                 self.state = self.game.state
             self.my_event()
             if self.next_move != '' and (
-                    self.state == 'run' or self.state == 'ai' and time.time() - self.last_time > self.step_time):
-                self.last_move = self.next_move
+                    self.state == 'run' or self.state == 'ai1' or self.state == 'ai2' and time.time() - self.last_time > self.step_time):
+                self.game.isGoal()
                 self.game.isGameOver()
                 self.game.board.Swipe(self.next_move, True)
                 self.game.setRandomNumberInTile(k=1)
-                print(self.game.board)
-                self.ai.UpdateTree(self.game.board, self.next_move)
-                # self.ai.UpdateBoard(self.game.board)
+                if self.state == 'ai1':
+                    self.ai1.UpdateTree(self.game.board, self.next_move)
+                self.ai2.UpdateBoard(self.game.board)
                 self.next_move = ''
                 self.last_time = time.time()
             elif self.state == 'restart':
@@ -76,13 +78,6 @@ class Main:
             self.update()
         print('Exit game')
 
-    def start(self):
-        # 加载按钮
-        self.button_list = [
-            Button('start', 'Restart', (GAME_WH + 50, 150)),
-            Button('ai', 'UseAI', (GAME_WH + 50, 250)),
-        ]
-        self.run()
 
     # setting window size
     def set_win_wh(self, w, h, title='2048'):
@@ -146,14 +141,10 @@ class Main:
 
     # event detection
     def my_event(self):
-        if self.state == 'ai' and self.next_move == '':
-            if self.last_move == '':
-                self.next_move = self.ai.ComputeNextMove()
-            else:
-                #self.ai.UpdateTree(self.game.board, self.last_move)
-                self.next_move = self.ai.ComputeNextMove()
-            # self.next_move = self.ai.GetNextMove(20)
-            # self.ai = ExpectiMaxAgent(self.game.board, heuristic='snake')
+        if self.state == 'ai1' and self.next_move == '':
+            self.next_move = self.ai1.ComputeNextMove()
+        elif self.state == 'ai2' and self.next_move == '':
+            self.next_move = self.ai2.GetNextMove()
         for event in pygame.event.get():
             if event.type == QUIT:
                 self.state = 'exit'
@@ -168,7 +159,7 @@ class Main:
                     self.next_move = 'down'
                 elif event.key in [K_UP, K_w] and self.state == 'run':
                     self.next_move = 'up'
-                elif event.key in [K_k, K_l] and self.state == 'ai':
+                elif event.key in [K_k, K_l] and (self.state == 'ai1' or self.state == 'ai2'):
                     if event.key == K_k and self.step_time > 0:
                         self.step_time *= 0.9
                     if event.key == K_l and self.step_time < 10:
@@ -182,18 +173,31 @@ class Main:
             if event.type == MOUSEBUTTONDOWN:
                 for i in self.button_list:
                     if i.is_click(event.pos):
-                        self.state = i.name
-                        if i.name == 'ai':
-                            i.name = 'run'
-                            i.text = 'Cancel AI'
-                        elif i.name == 'run':
-                            i.name = 'ai'
-                            i.text = 'AI run'
+                        self.state = i.player
+                        if i.name == 'ai1':
+                            i.name = 'run ai1'
+                            i.player = 'run'
+                            i.text = 'Cancel AI1'
+                        elif i.name == 'ai2':
+                            i.name = 'run ai2'
+                            i.player = 'run'
+                            i.text = 'Cancel AI2'
+                        elif i.player == 'run' and i.name == 'run ai1':
+                            i.name = 'ai1'
+                            i.player = 'ai1'
+                            i.text = 'ExpectiMax'
+                        elif i.player == 'run' and i.name == 'run ai2':
+                            i.name = 'ai2'
+                            i.player = 'ai2'
+                            i.text = 'MCTS'
+                        # elif i.player == 'start':
+                        #     i.name = 'start'
+                        #     i.player = 'start'
                         break
 
     def draw_info(self):
         self.draw_text('Score：{}'.format(self.game.board.score), (GAME_WH + 50, 40))
-        if self.state == 'ai':
+        if self.state == 'ai1' or self.state == 'ai2':
             self.draw_text('Step_time：{}'.format(self.step_time), (GAME_WH + 50, 60))
             #self.draw_text('评分：{}'.format(self.jm), (GAME_WH + 50, 80))
 
@@ -203,15 +207,27 @@ class Main:
                 pygame.draw.rect(self.screen, (180, 180, 200),
                                  (b.x, b.y, b.w, b.h))
                 self.draw_text(b.text, (b.x + b.w / 2, b.y + 9), size=18, center='center')
+
+    def start(self):
+        # load button
+        self.button_list = [
+            Button('start', 'restart', 'Restart', (GAME_WH + 50, 150)),
+            Button('ai1', 'ai1', 'ExpectiMax', (GAME_WH + 50, 250)),
+            Button('ai2',  'ai2', 'MCTS', (GAME_WH + 50, 350))
+        ]
+        self.run()
+
+
 def run():
     Main().start()
 
 # 按钮类
 class Button(pygame.sprite.Sprite):
-    def __init__(self, name, text, xy, size=(100, 50)):
+    def __init__(self, name, player, text, xy, size=(100, 50)):
         pygame.sprite.Sprite.__init__(self)
         self.name = name
         self.text = text
+        self.player = player
         self.x, self.y = xy[0], xy[1]
         self.w, self.h = size
         self.is_show = True

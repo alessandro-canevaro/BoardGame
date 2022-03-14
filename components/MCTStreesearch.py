@@ -13,8 +13,15 @@ class MCTSAgent:
         self.board = board
         self.next_move = '',
 
-    def GetNextMove(self, runs) -> str:
+    def GetNextMove(self) -> str:
         Simulation = MoveSimulation(self.board)
+        empty_tiles = Simulation.board.GetEmptyTiles()
+        if len(empty_tiles) > 7:
+            runs = 20
+        elif len(empty_tiles) > 4:
+            runs = 50
+        else:
+            runs = 70
         self.next_move = Simulation.BestNextMove(runs)
         return self.next_move
 
@@ -90,7 +97,7 @@ def main():
             runs = 50
         else:
             runs = 70
-        mc_move = mc.GetNextMove(runs)
+        mc_move = mc.GetNextMove()
         print("Move: {}: Score: {} AI suggests: {}".format(i, int(ge.board.score), mc_move))
         ge.board.Swipe(mc_move, True)
         ge.setRandomNumberInTile(k=1)

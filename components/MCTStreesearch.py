@@ -4,6 +4,8 @@ import numpy as np
 import math
 from components.Board import Board
 from components.Game_engine import GameEngine
+import time
+from multiprocessing.dummy import Pool as ThreadPool
 
 possible_move = ['left', 'right', 'up', 'down']
 
@@ -17,12 +19,12 @@ class MCTSAgent:
         Simulation = MoveSimulation(self.board)
         empty_tiles = Simulation.board.GetEmptyTiles()
         if len(empty_tiles) > 7:
-            runs = 20
+            Simulation.runs = 20
         elif len(empty_tiles) > 4:
-            runs = 50
+            Simulation.runs = 50
         else:
-            runs = 70
-        self.next_move = Simulation.BestNextMove(runs)
+            Simulation.runs = 70
+        self.next_move = Simulation.BestNextMove()
         return self.next_move
 
     def UpdateBoard(self, current_board):
@@ -34,49 +36,49 @@ class MoveSimulation:
         self.board = board
         self.simulation_board = None
         self.max_score_move = 0
+        self.runs = 20
 
-    def BestNextMove(self, runs):
+    def BestNextMove(self):
         # max_score = 0
         record_score = []
         Possible_move = self.board.PossibleMoves()
         for m in Possible_move:
             moved_board = Board(self.board)
             moved_board.Swipe(m, True)
-            template_score = evalRandomRun(moved_board, runs)
+            template_score = self.evalRandomRun(moved_board)
             record_score.append(template_score)
         # max_score = max(record_score)
         self.max_score_move = Possible_move[np.argmax(record_score)]
         print(record_score)
         return self.max_score_move
 
-
-def evalRandomRun(board, runs):
-    total_score = 0
-    # total_move = 0
-    i = 0
-    while i < runs:
-        simulation_board = Board(board)
-        # Possible_move = simulation_board.PossibleMoves()
-        # move = 0
-        while simulation_board.PossibleMoves():
-            simulation_board.Swipe(possible_move[math.floor(random.random() * 4)], False)
-            # move += 1
-            position = simulation_board.GetEmptyTiles()
-            if position:
-                rand_pos = random.sample(position, 1)
-                rand_num = random.choices([2, 4], [0.9, 0.1], k=1)
-                for pos, value in zip(rand_pos, rand_num):
-                    simulation_board.SetEmptyTile(pos, value)
-        simulation_score = int(np.sum(simulation_board.values))
-        # total_score += simulation_board.score
-        total_score += simulation_score
-        # total_move += move
-        i += 1
-    sum_score = np.sum(total_score)
-    # sum_move = np.sum(total_move)
-    # avg_score = sum_score / sum_move
-    # simMax_score = max(total_score)
-    return sum_score
+    def evalRandomRun(self, board):
+        total_score = 0
+        # total_move = 0
+        i = 0
+        for i in range(self.runs):
+            simulation_board = Board(board)
+            # Possible_move = simulation_board.PossibleMoves()
+            # move = 0
+            while simulation_board.PossibleMoves():
+                simulation_board.Swipe(possible_move[math.floor(random.random() * 4)], False)
+                # move += 1
+                position = simulation_board.GetEmptyTiles()
+                if position:
+                    rand_pos = random.sample(position, 1)
+                    rand_num = random.choices([2, 4], [0.9, 0.1], k=1)
+                    for pos, value in zip(rand_pos, rand_num):
+                        simulation_board.SetEmptyTile(pos, value)
+            simulation_score = int(np.sum(simulation_board.values))
+            # total_score += simulation_board.score
+            total_score += simulation_score
+            # total_move += move
+            i += 1
+        sum_score = np.sum(total_score)
+        # sum_move = np.sum(total_move)
+        # avg_score = sum_score / sum_move
+        # simMax_score = max(total_score)
+        return sum_score
 
 
 def main():
@@ -86,7 +88,6 @@ def main():
     i = 0
     while i <= 10000:
         ge.printBoard()
-
         if ge.isGameOver():
             print("Game over!")
             break

@@ -87,15 +87,22 @@ class GameEngine:
             print((demarcation + '\n').join(['| ' + ' | '.join([conver2char(int(num)) for num in board_list[i * 4:(i + 1) * 4]]) + ' | ']))
             print(demarcation)
 
+    def auto_play(self):
+        #clock = pygame.time.Clock()
+        self.draw_game()
+        while pygame.event.get():
+            self.draw_game()
+            pygame.display.flip()
 
-if __name__ == "__main__":
-    ge = GameEngine()
-    ge.setRandomNumberInTile(k=2)
-    print(ge.board.values[0][1])
-    print((demarcation + '\n').join(['| ' + ' | '.join(
-                [conver2char(int(num)) for num in board_list[i * 4:(i + 1) * 4]]) + ' | ']))
-    print(demarcation)
-
+        """while True:
+            self.draw_game()
+            pygame.display.flip()
+            cmd = key_press()
+            if cmd == 'l':
+                board = self.swipe_left(self.board)
+                self.board = board
+            elif cmd == 'q':
+                break"""
 
     """ Graphicl representation of the game """
     def draw_game(self):
@@ -152,20 +159,17 @@ if __name__ == "__main__":
                         return 'd'
                     elif event.key == K_q or event.key == K_ESCAPE:
                         return 'q'
-    
-    def auto_play(self):
-        #clock = pygame.time.Clock()
-        self.draw_game()
-        while pygame.event.get():
-            self.draw_game()
-            pygame.display.flip()
 
-        """while True:
-            self.draw_game()
-            pygame.display.flip()
-            cmd = key_press()
-            if cmd == 'l':
-                board = self.swipe_left(self.board)
-                self.board = board
-            elif cmd == 'q':
-                break"""
+
+if __name__ == "__main__":
+    ge = GameEngine()
+    ge.setRandomNumberInTile(k=2)
+    print(ge.board.values[0][1])
+    print((demarcation + '\n').join(['| ' + ' | '.join(
+                [conver2char(int(num)) for num in board_list[i * 4:(i + 1) * 4]]) + ' | ']))
+    print(demarcation)
+
+
+    
+    
+

@@ -10,7 +10,7 @@ def main():
     i = 0
     while i <= 10000:
         """ for console based demostration of board game"""
-        ge.printboard()
+        ge.printBoard()
         """ for graphical demostration of board game"""
         ge.auto_play()
     

@@ -85,3 +85,7 @@ class Board:
             self.values = new_board
         else:
             return new_board
+
+
+if __name__ == "__main__":
+    b = Board

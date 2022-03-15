@@ -2,6 +2,7 @@
 
 from components.Game_engine import GameEngine
 from components.ExpectiMax import ExpectiMaxAgent
+from components.Gui_2048 import GuiClass
 
 def main():
     ge = GameEngine()
@@ -11,9 +12,6 @@ def main():
     while i <= 10000:
         """ for console based demostration of board game"""
         ge.printBoard()
-        """ for graphical demostration of board game"""
-        ge.auto_play()
-    
         if ge.isGameOver():
             print("Game over!")
             break

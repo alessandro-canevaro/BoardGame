@@ -52,7 +52,6 @@ class Main:
         #self.ai = MCTSAgent(self.game.board)
         print(self.next_move)
         self.ai1 = ExpectiMaxAgent(self.game.board, heuristic='snake')
-        print('oj')
         self.ai2 = MCTSAgent(self.game.board)
         while self.state != 'exit':
             if self.game.state in ['over', 'victory']:

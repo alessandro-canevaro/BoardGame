@@ -52,6 +52,7 @@ class Main:
         #self.ai = MCTSAgent(self.game.board)
         print(self.next_move)
         self.ai1 = ExpectiMaxAgent(self.game.board, heuristic='snake')
+        print('oj')
         self.ai2 = MCTSAgent(self.game.board)
         while self.state != 'exit':
             if self.game.state in ['over', 'victory']:
@@ -63,14 +64,13 @@ class Main:
                 self.game.isGameOver()
                 self.game.board.Swipe(self.next_move, True)
                 self.game.setRandomNumberInTile(k=1)
-                if self.state == 'ai1':
-                    self.ai1.UpdateTree(self.game.board, self.next_move)
+                self.ai1.UpdateTree(self.game.board, self.next_move)
                 self.ai2.UpdateBoard(self.game.board)
                 self.next_move = ''
                 self.last_time = time.time()
             elif self.state == 'restart':
-                self.game.start()
                 self.state = 'run'
+                self.run()
             self.set_bg((255, 255, 153))
             self.draw_info()
             self.draw_button(self.button_list)

@@ -51,7 +51,7 @@ def ExpectiMaxTest(depth='adaptive', heuristic='snake', max_iter=10, goal=128, p
 
 
 if __name__ == "__main__":
-    score_avg, maxtile_stats, victory_stats = ExpectiMaxTest(depth=1, heuristic='snake', max_iter=10, goal=256, print_info=False)
+    score_avg, maxtile_stats, victory_stats = ExpectiMaxTest(depth=1, heuristic='snake', max_iter=50, goal=2048, print_info=False)
     print(score_avg, maxtile_stats, victory_stats)
     
     #plot max tile dict
@@ -66,4 +66,13 @@ if __name__ == "__main__":
 
     plt.show()
 
-#do stuff...
+
+# ------- RESULTS --------
+
+#ExpectiMaxTest(depth='adaptive', heuristic='snake', max_iter=50, goal=2048, print_info=False)
+#time start = 9.40, time end = 11.15
+#19518.72 {1024: 6, 2048: 43, 256: 1} {'Victory': 43, 'Game Over': 7}
+
+#ExpectiMaxTest(depth=1, heuristic='snake', max_iter=50, goal=2048, print_info=False)
+#time less than 1 min
+#3326.96 {256: 24, 512: 10, 128: 11, 32: 1, 64: 4} {'Victory': 0, 'Game Over': 50}

@@ -20,10 +20,10 @@ class MCTSAgent:
         empty_tiles = Simulation.board.GetEmptyTiles()
         max_number = np.max(Simulation.board.values)
         if max_number < 1024:
-            if len(empty_tiles) > 7:
+            if len(empty_tiles) > 7 :
                 Simulation.runs = 5  # 20
-            elif len(empty_tiles) > 4:
-                Simulation.runs = 10  # 40
+            elif len(empty_tiles) > 4 and max_number < 512:
+                Simulation.runs = 15  # 40
             else:
                 Simulation.runs = 20
         else:
@@ -63,12 +63,12 @@ class MoveSimulation:
         # simMax_num = []
         # total_move = 0
         i = 0
-        max_move = self.runs * 4
+        move_depth = self.runs * 4
         for i in range(self.runs):
             simulation_board = Board(board)
             # Possible_move = simulation_board.PossibleMoves()
             move = 0
-            while simulation_board.PossibleMoves() and move < max_move:
+            while simulation_board.PossibleMoves() and move < move_depth:
                 simulation_board.Swipe(possible_move[math.floor(random.random() * 4)], True)
                 move += 1
                 position = simulation_board.GetEmptyTiles()
@@ -86,10 +86,10 @@ class MoveSimulation:
             i += 1
         sum_score = np.sum(total_score)
         # sum_move = np.sum(total_move)
-        # avg_score = sum_score / sum_move
+        avg_score = sum_score / self.runs
         # simMax_score = max(simMax_num)
         return sum_score
-        # return simMax_score
+        # return avg_score
 
 
 def main():

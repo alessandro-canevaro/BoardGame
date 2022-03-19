@@ -16,6 +16,9 @@ class Board:
     def __eq__(self, board_obj) -> bool:
         return np.array_equal(self.values, board_obj.values)
 
+    def GetMaxTileValue(self):
+        return np.max(self.values)
+
     def PossibleMoves(self) -> list:
         """Return a list with the possible moves between l, r, u, d.
         """

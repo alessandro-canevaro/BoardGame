@@ -101,6 +101,8 @@ class ExpectiMaxAgent:
                 depth = 2
             else:    
                 depth = 3
+        else:
+            depth = self.depth
 
         return self.root.GetBestMove(depth, self.heuristic)
 

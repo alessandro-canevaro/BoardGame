@@ -41,6 +41,7 @@ class MoveSimulation:
         self.simulation_board = None
         self.max_score_move = 0
         self.depth = 20
+        self.runs = 50
 
     def BestNextMove(self):
         # max_score = 0
@@ -60,7 +61,7 @@ class MoveSimulation:
         total_score = 0
         i = 0
         move_depth = self.depth * 4 if self.depth < 45 else 100000
-        for i in range(50):
+        for i in range(self.runs):
             simulation_board = Board(board)
             move = 0
             while simulation_board.PossibleMoves() and move < move_depth:

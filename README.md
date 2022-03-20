@@ -1,3 +1,12 @@
+# General Description
+BoardGame2048.py - This is the entry point for the game.
+ExpectiMax.py - Implementation of the ExpectiMax algorithm
+MCTStreesearch.py - Implementation of the MCTS algorithm
+Game_engine.py - Core part of the game.
+Board.py - Represents the game board and main operations.
+tests_and_plots.py & Test_MCTS - Used to generate plots for the report.
+
+
 # BoardGame
 Board game project for the course Introduction to AI
 

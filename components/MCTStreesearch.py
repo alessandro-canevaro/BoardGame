@@ -20,14 +20,14 @@ class MCTSAgent:
         empty_tiles = Simulation.board.GetEmptyTiles()
         max_number = np.max(Simulation.board.values)
         if max_number < 1024:
-            if len(empty_tiles) > 7 :
-                Simulation.runs = 5  # 20
+            if len(empty_tiles) > 7:
+                Simulation.depth = 5  # 20
             elif len(empty_tiles) > 4 and max_number < 512:
-                Simulation.runs = 20  # 60
+                Simulation.depth = 15  # 60
             else:
-                Simulation.runs = 40 # 160
+                Simulation.depth = 20  # 160
         else:
-            Simulation.runs = 50  # 200
+            Simulation.depth = 50  # 200
         self.next_move = Simulation.BestNextMove()
         return self.next_move
 
@@ -40,7 +40,7 @@ class MoveSimulation:
         self.board = board
         self.simulation_board = None
         self.max_score_move = 0
-        self.runs = 15
+        self.depth = 20
 
     def BestNextMove(self):
         # max_score = 0
@@ -59,8 +59,8 @@ class MoveSimulation:
     def evalRandomRun(self, board):
         total_score = 0
         i = 0
-        move_depth = self.runs * 4 if self.runs < 45 else 100000
-        for i in range(self.runs):
+        move_depth = self.depth * 4 if self.depth < 45 else 100000
+        for i in range(50):
             simulation_board = Board(board)
             move = 0
             while simulation_board.PossibleMoves() and move < move_depth:

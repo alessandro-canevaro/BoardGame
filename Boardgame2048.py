@@ -75,7 +75,7 @@ class Main:
             self.draw_button(self.button_list)
             self.draw_map()
             self.update()
-        print('Exit game')
+        #print('Exit game')
 
 
     # setting window size

@@ -51,7 +51,7 @@ def ExpectiMaxTest(depth='adaptive', heuristic='snake', max_iter=10, goal=128, p
 
 
 if __name__ == "__main__":
-    score_avg, maxtile_stats, victory_stats = ExpectiMaxTest(depth='adaptive', heuristic='snake8x', max_iter=50, goal=100000, print_info=False)
+    score_avg, maxtile_stats, victory_stats = ExpectiMaxTest(depth='adaptive', heuristic='snake8x', max_iter=17, goal=100000, print_info=False)
     print(score_avg, maxtile_stats, victory_stats)
     
     #plot max tile dict
@@ -121,4 +121,28 @@ Match 29 finished with Game over. The score was: 36216, and maximum tile was: 20
 Match 30 finished with Game over. The score was: 61336, and maximum tile was: 4096
 Match 31 finished with Game over. The score was: 70788, and maximum tile was: 4096
 Match 32 finished with Game over. The score was: 16392, and maximum tile was: 1024
+
+Match 0 finished with Game over. The score was: 61632, and maximum tile was: 4096
+Match 1 finished with Game over. The score was: 28216, and maximum tile was: 2048
+Match 2 finished with Game over. The score was: 36116, and maximum tile was: 2048
+Match 3 finished with Game over. The score was: 42912, and maximum tile was: 2048
+Match 4 finished with Game over. The score was: 56780, and maximum tile was: 4096
+Match 5 finished with Game over. The score was: 34548, and maximum tile was: 2048
+Match 6 finished with Game over. The score was: 30552, and maximum tile was: 2048
+Match 7 finished with Game over. The score was: 133180, and maximum tile was: 8192
+Match 8 finished with Game over. The score was: 58972, and maximum tile was: 4096
+Match 9 finished with Game over. The score was: 27520, and maximum tile was: 2048
+Match 10 finished with Game over. The score was: 72420, and maximum tile was: 4096
+
+Match 11 finished with Game over. The score was: 80212, and maximum tile was: 4096
+Match 12 finished with Game over. The score was: 36176, and maximum tile was: 2048
+Match 13 finished with Game over. The score was: 35996, and maximum tile was: 2048
+Match 14 finished with Game over. The score was: 53620, and maximum tile was: 4096
+Match 15 finished with Game over. The score was: 71640, and maximum tile was: 4096
+Match 16 finished with Game over. The score was: 56428, and maximum tile was: 4096
 """
+
+#[36172, 80524, 57264, 32096, 32220, 36092, 68328, 67600, 67748, 119312, 36604, 67864, 50620, 51896, 16352, 27180, 31428, 32616, 79756, 59404, 61228, 16940, 60932, 50720, 54440, 78348, 29764, 16104, 61188, 36216, 61336, 70788, 16392, 61632, 28216, 36116, 42912, 56780, 34548, 30552, 133180, 58972, 27520, 72420, 80212, 36176, 35996, 53620, 71640, 56428]
+
+
+

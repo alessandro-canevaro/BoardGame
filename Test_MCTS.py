@@ -32,11 +32,10 @@ def MCTSTest():
 if __name__ == "__main__":
     max_number = []
     max_iter = 20
-    # for j in range(max_iter):
-    #     max_num = MCTSTest()
-    #     max_number.append(max_num)
-    #     j += 1
-    max_number =[1024.0, 256.0, 512.0, 2048.0, 2048.0, 1024.0, 1024.0, 1024.0, 1024.0, 1024.0, 1024.0, 1024.0, 1024.0, 1024.0, 1024.0, 1024.0,1024,1024,1024,1024]
+    for j in range(max_iter):
+        max_num = MCTSTest()
+        max_number.append(max_num)
+        j += 1
     result = Counter(max_number)
     keys, items = zip(*sorted(result.items()))
     keys = [str(k) for k in keys]

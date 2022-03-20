@@ -101,16 +101,19 @@ class ExpectiMaxAgent:
                 depth = 2
             else:    
                 depth = 3
+        else:
+            depth = self.depth
 
         return self.root.GetBestMove(depth, self.heuristic)
 
     def UpdateTree(self, board, lastmove):
-        best_child = next((c for c in self.root.children if c.move == lastmove))
-        for c in best_child.children:
-            if c.board == board:
-                self.root = c
-        
-        #self.root = MaxNode(None, board, 1)
+        best_child = next((c for c in self.root.children if c.move == lastmove), None)
+        if best_child != None:
+            for c in best_child.children:
+                if c.board == board:
+                    self.root = c
+        else:
+            self.root = MaxNode(None, board, 1)
     
 
 if __name__ == "__main__":

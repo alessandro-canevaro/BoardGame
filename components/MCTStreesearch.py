@@ -23,14 +23,12 @@ class MCTSAgent:
             if len(empty_tiles) > 7 :
                 Simulation.runs = 5  # 20
             elif len(empty_tiles) > 4 and max_number < 512:
-                Simulation.runs = 15  # 40
+                Simulation.runs = 20  # 60
             else:
-                Simulation.runs = 20
+                Simulation.runs = 40 # 160
         else:
-            Simulation.runs = 35  # 70
+            Simulation.runs = 50  # 200
         self.next_move = Simulation.BestNextMove()
-        if any(1024 in row for row in Simulation.board):
-            print(Simulation.runs)
         return self.next_move
 
     def UpdateBoard(self, current_board):
@@ -55,21 +53,18 @@ class MoveSimulation:
             record_score.append(template_score)
         # max_score = max(record_score)
         self.max_score_move = Possible_move[np.argmax(record_score)]
-        print(record_score)
+        # print(record_score)
         return self.max_score_move
 
     def evalRandomRun(self, board):
         total_score = 0
-        # simMax_num = []
-        # total_move = 0
         i = 0
-        move_depth = self.runs * 4
+        move_depth = self.runs * 4 if self.runs < 40 else 1000
         for i in range(self.runs):
             simulation_board = Board(board)
-            # Possible_move = simulation_board.PossibleMoves()
             move = 0
             while simulation_board.PossibleMoves() and move < move_depth:
-                simulation_board.Swipe(possible_move[math.floor(random.random() * 4)], True)
+                simulation_board.Swipe(possible_move[math.floor(random.random() * 4)], False)
                 move += 1
                 position = simulation_board.GetEmptyTiles()
                 if position:
@@ -86,10 +81,8 @@ class MoveSimulation:
             i += 1
         sum_score = np.sum(total_score)
         # sum_move = np.sum(total_move)
-        avg_score = sum_score / self.runs
         # simMax_score = max(simMax_num)
         return sum_score
-        # return avg_score
 
 
 def main():
@@ -97,15 +90,15 @@ def main():
     ge.setRandomNumberInTile(k=2)
     mc = MCTSAgent(ge.board)
     i = 0
-    while i <= 10000:
-        ge.printBoard()
+    for i in range(10000):
+        # ge.printBoard()
+        # empty_tiles = ge.board.GetEmptyTiles()
         if ge.isGameOver():
             print("Game over!")
-            break
+            return np.max(ge.board.values)
         if ge.isGoal():
             print("victory")
-            break
-        # empty_tiles = ge.board.GetEmptyTiles()
+            return np.max(ge.board.values)
         mc_move = mc.GetNextMove()
         print("Move: {}: Score: {} AI suggests: {}".format(i, int(ge.board.score), mc_move))
         ge.board.Swipe(mc_move, True)
@@ -121,5 +114,11 @@ if __name__ == "__main__":
     # print(b)
     # agent = MCTSAgent(b, 'debug')
     # print(agent.board)
-    main()
+    max_number = []
+    for j in range(5):
+        max_num = main()
+        max_number.append(max_num)
+        j += 1
+    print(max_number)
     print("All done")
+ # [1024.0, 256.0, 512.0, 1024.0, 512.0, 1024.0, 1024.0, 1024.0, 1024.0, 1024.0, 512.0, 512.0, 1024.0, 512.0, 1024.0, 1024.0, 1024.0, 1024.0, 512.0, 1024.0]

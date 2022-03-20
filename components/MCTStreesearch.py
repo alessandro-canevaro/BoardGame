@@ -109,16 +109,10 @@ def main():
 
 if __name__ == "__main__":
     print("Do some tests...")
-    # b = Board()
-    # b.SetEmptyTile((2, 2), 2)
-    # print(b)
-    # agent = MCTSAgent(b, 'debug')
-    # print(agent.board)
     max_number = []
-    for j in range(5):
+    for j in range(20):
         max_num = main()
         max_number.append(max_num)
         j += 1
     print(max_number)
     print("All done")
- # [1024.0, 256.0, 512.0, 1024.0, 512.0, 1024.0, 1024.0, 1024.0, 1024.0, 1024.0, 512.0, 512.0, 1024.0, 512.0, 1024.0, 1024.0, 1024.0, 1024.0, 512.0, 1024.0]

@@ -46,14 +46,15 @@ if __name__ == "__main__":
 
 # ------- RESULTS --------
 
-# MCTSTest(max_iter=20, goal=2048, move_depth = runs * 2)
+# MCTSTest(max_iter=20, goal=2048, move_depth = depth * 2)
 # time start = 18.00, time end = 22.30
 # {1024: 16, 2048: 2, 256: 1, 512:1} {'Victory': 2, 'Game Over': 18}
 
-# MCTSTest(max_iter=20, goal=2048, move_depth = runs * 4)
+# MCTSTest(max_iter=20, goal=2048, move_depth = depth * 1)
 # time start = 8.00, time end = 10.00
 # {256: 1, 512: 6, 1024: 13} {'Victory': 0, 'Game Over': 20}
 
-# MCTSTest(max_iter=20, goal=2048, move_depth = runs * 6)
+# MCTSTest(max_iter=20, goal=2048, move_depth = depth * 4)
 # time start = 10.30, time end = 17.30
 # {1024: 4, 2048: 12, 512: 2} {'Victory': 12, 'Game Over': 8}
+

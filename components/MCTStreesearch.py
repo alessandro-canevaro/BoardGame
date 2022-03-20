@@ -18,12 +18,16 @@ class MCTSAgent:
     def GetNextMove(self) -> str:
         Simulation = MoveSimulation(self.board)
         empty_tiles = Simulation.board.GetEmptyTiles()
-        if len(empty_tiles) > 7:
-            Simulation.runs = 20
-        elif len(empty_tiles) > 4:
-            Simulation.runs = 50
+        max_number = np.max(Simulation.board.values)
+        if max_number < 1024:
+            if len(empty_tiles) > 7 :
+                Simulation.runs = 5  # 20
+            elif len(empty_tiles) > 4 and max_number < 512:
+                Simulation.runs = 20  # 60
+            else:
+                Simulation.runs = 40 # 160
         else:
-            Simulation.runs = 70
+            Simulation.runs = 50  # 200
         self.next_move = Simulation.BestNextMove()
         return self.next_move
 
@@ -36,7 +40,7 @@ class MoveSimulation:
         self.board = board
         self.simulation_board = None
         self.max_score_move = 0
-        self.runs = 20
+        self.runs = 15
 
     def BestNextMove(self):
         # max_score = 0
@@ -49,20 +53,19 @@ class MoveSimulation:
             record_score.append(template_score)
         # max_score = max(record_score)
         self.max_score_move = Possible_move[np.argmax(record_score)]
-        print(record_score)
+        # print(record_score)
         return self.max_score_move
 
     def evalRandomRun(self, board):
         total_score = 0
-        # total_move = 0
         i = 0
+        move_depth = self.runs * 4 if self.runs < 40 else 1000
         for i in range(self.runs):
             simulation_board = Board(board)
-            # Possible_move = simulation_board.PossibleMoves()
-            # move = 0
-            while simulation_board.PossibleMoves():
+            move = 0
+            while simulation_board.PossibleMoves() and move < move_depth:
                 simulation_board.Swipe(possible_move[math.floor(random.random() * 4)], False)
-                # move += 1
+                move += 1
                 position = simulation_board.GetEmptyTiles()
                 if position:
                     rand_pos = random.sample(position, 1)
@@ -71,13 +74,14 @@ class MoveSimulation:
                         simulation_board.SetEmptyTile(pos, value)
             simulation_score = int(np.sum(simulation_board.values))
             # total_score += simulation_board.score
+            # max_score = int(np.max(simulation_board.values))
             total_score += simulation_score
+            # simMax_num.append(max_score)
             # total_move += move
             i += 1
         sum_score = np.sum(total_score)
         # sum_move = np.sum(total_move)
-        # avg_score = sum_score / sum_move
-        # simMax_score = max(total_score)
+        # simMax_score = max(simMax_num)
         return sum_score
 
 
@@ -86,18 +90,15 @@ def main():
     ge.setRandomNumberInTile(k=2)
     mc = MCTSAgent(ge.board)
     i = 0
-    while i <= 10000:
-        ge.printBoard()
+    for i in range(10000):
+        # ge.printBoard()
+        # empty_tiles = ge.board.GetEmptyTiles()
         if ge.isGameOver():
             print("Game over!")
-            break
-        empty_tiles = ge.board.GetEmptyTiles()
-        if len(empty_tiles) > 7:
-            runs = 20
-        elif len(empty_tiles) > 4:
-            runs = 50
-        else:
-            runs = 70
+            return np.max(ge.board.values)
+        if ge.isGoal():
+            print("victory")
+            return np.max(ge.board.values)
         mc_move = mc.GetNextMove()
         print("Move: {}: Score: {} AI suggests: {}".format(i, int(ge.board.score), mc_move))
         ge.board.Swipe(mc_move, True)
@@ -113,5 +114,11 @@ if __name__ == "__main__":
     # print(b)
     # agent = MCTSAgent(b, 'debug')
     # print(agent.board)
-    main()
+    max_number = []
+    for j in range(5):
+        max_num = main()
+        max_number.append(max_num)
+        j += 1
+    print(max_number)
     print("All done")
+ # [1024.0, 256.0, 512.0, 1024.0, 512.0, 1024.0, 1024.0, 1024.0, 1024.0, 1024.0, 512.0, 512.0, 1024.0, 512.0, 1024.0, 1024.0, 1024.0, 1024.0, 512.0, 1024.0]

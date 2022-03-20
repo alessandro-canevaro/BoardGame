@@ -95,7 +95,7 @@ class Main:
             pygame.draw.rect(self.screen, (0, 0, 0, 0.5),
                              (0, 0, GAME_WH, GAME_WH))
             self.draw_text('Game Over！', (GAME_WH / 2, GAME_WH / 2), size=25, center='center')
-        elif self.state == 'Victory':
+        elif self.state == 'victory':
             pygame.draw.rect(self.screen, (0, 0, 0, 0.5),
                              (0, 0, GAME_WH, GAME_WH))
             self.draw_text('Victory！', (GAME_WH / 2, GAME_WH / 2), size=25, center='center')

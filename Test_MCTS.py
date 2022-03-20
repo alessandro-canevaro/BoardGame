@@ -56,5 +56,5 @@ if __name__ == "__main__":
 
 # MCTSTest(max_iter=20, goal=2048, move_depth = depth * 4)
 # time start = 10.30, time end = 17.30
-# {1024: 4, 2048: 12, 512: 2} {'Victory': 12, 'Game Over': 8}
+# {1024: 7, 2048: 11, 512: 2} {'Victory': 11, 'Game Over': 9}
 

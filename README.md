@@ -3,7 +3,7 @@ Board game project for the course Introduction to AI
 
 # Packages required to install prior to run the game
 - pip install numpy
-- pip install matplotlib
+- pip install matplotlib (only needed to run tests_and_plots.py. Not needed for the main game)
 - pip install -U pygame 
 
 # The main interface can be execute with the command

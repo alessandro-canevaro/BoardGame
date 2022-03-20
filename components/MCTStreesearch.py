@@ -59,7 +59,7 @@ class MoveSimulation:
     def evalRandomRun(self, board):
         total_score = 0
         i = 0
-        move_depth = self.runs * 4 if self.runs < 40 else 1000
+        move_depth = self.runs * 4 if self.runs < 45 else 1000
         for i in range(self.runs):
             simulation_board = Board(board)
             move = 0
